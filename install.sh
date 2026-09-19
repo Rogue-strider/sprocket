@@ -16,9 +16,10 @@ os="$(uname -s)"
 arch="$(uname -m)"
 
 case "$os" in
-  Linux)  goos="linux" ;;
-  Darwin) goos="darwin" ;;
-  *)      echo "Unsupported OS: $os (use install.ps1 on native Windows)" >&2; exit 1 ;;
+  Linux)              goos="linux" ;;
+  Darwin)             goos="darwin" ;;
+  MINGW*|MSYS*|CYGWIN*) goos="windows" ;;  # Git Bash / MSYS2 on Windows
+  *)                  echo "Unsupported OS: $os" >&2; exit 1 ;;
 esac
 
 case "$arch" in
@@ -30,8 +31,13 @@ esac
 platform="${goos}-${goarch}"
 echo "==> Detected platform: $platform"
 
+# Prebuilt Windows binaries are named with a .exe suffix already
+# (sprocket-learn-windows-amd64.exe); Linux/macOS ones have no suffix.
+src_ext=""
+[ "$goos" = "windows" ] && src_ext=".exe"
+
 for cmd in sprocket-learn sprocket-validate sprocket-hook; do
-  src="$BIN_DIR/${cmd}-${platform}"
+  src="$BIN_DIR/${cmd}-${platform}${src_ext}"
   dest="$BIN_DIR/${cmd}.exe"
   if [ ! -f "$src" ]; then
     echo "No prebuilt binary for $platform ($src missing)." >&2
