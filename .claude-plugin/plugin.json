@@ -1,0 +1,10 @@
+{
+  "name": "sprocket",
+  "version": "0.2.0",
+  "description": "A plug-and-play AI development OS for Claude Code: specialized agents, skills, slash commands, hooks, and pre-wired MCP servers (GitHub, Supabase, Vercel, Railway) — plus a continuous-learning loop that mines your git history to grow new skills over time.",
+  "author": {
+    "name": "Your Name"
+  },
+  "license": "MIT",
+  "keywords": ["ai-agents", "developer-tools", "claude-code", "mcp", "productivity"]
+}

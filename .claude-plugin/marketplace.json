@@ -1,0 +1,14 @@
+{
+  "name": "sprocket-marketplace",
+  "owner": {
+    "name": "Your Name"
+  },
+  "plugins": [
+    {
+      "name": "sprocket",
+      "source": "./",
+      "description": "Specialized agents, skills, commands, hooks, and pre-wired MCP servers for Claude Code, with a continuous-learning loop that grows new skills from your git history.",
+      "version": "0.2.0"
+    }
+  ]
+}

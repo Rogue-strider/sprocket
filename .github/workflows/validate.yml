@@ -1,0 +1,69 @@
+name: validate
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: go test
+        run: go test ./... -v
+
+      - name: go build (all commands)
+        run: go build ./...
+
+      - name: Build validator for this runner and self-check the plugin
+        run: |
+          go build -o /tmp/sprocket-validate ./cmd/sprocket-validate
+          /tmp/sprocket-validate --root .
+
+      - name: Check install script syntax
+        run: bash -n install.sh
+
+  cross-compile:
+    runs-on: ubuntu-latest
+    needs: test
+    strategy:
+      matrix:
+        include:
+          - { goos: linux,   goarch: amd64 }
+          - { goos: linux,   goarch: arm64 }
+          - { goos: darwin,  goarch: amd64 }
+          - { goos: darwin,  goarch: arm64 }
+          - { goos: windows, goarch: amd64 }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Build for ${{ matrix.goos }}/${{ matrix.goarch }}
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+        run: |
+          mkdir -p dist
+          for cmd in sprocket-learn sprocket-validate sprocket-hook; do
+            ext=""
+            if [ "${{ matrix.goos }}" = "windows" ]; then ext=".exe"; fi
+            go build -ldflags="-s -w" -o "dist/${cmd}-${{ matrix.goos }}-${{ matrix.goarch }}${ext}" "./cmd/${cmd}"
+          done
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: binaries-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: dist/

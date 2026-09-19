@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+*.log
+.claude/settings.local.json
+
+# install.sh/install.ps1 stage a platform-specific copy at bin/*.exe on
+# install — don't commit those, only the per-platform prebuilt binaries
+# (bin/sprocket-*-<os>-<arch>) that ship as this project's "releases".
+bin/sprocket-learn.exe
+bin/sprocket-validate.exe
+bin/sprocket-hook.exe
