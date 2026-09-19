@@ -3,6 +3,24 @@
 All notable changes to this project are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.3.0] — AWS/infra agent
+
+### Added
+- 9th agent: `aws-infra-reviewer` — reviews Terraform/CDK/CloudFormation,
+  IAM policies, Dockerfiles, and deployment CI/CD for security and
+  blast-radius issues (IAM over-permissioning, exposed security groups,
+  unsafe state management, secrets in image layers, ungated production
+  deploys). Added because AWS/deployment was named as an actual gap in the
+  existing 8 — not guessed in advance.
+- Matching skill: `aws-infra-checklist`
+- `/review` now routes `.tf` files, CDK/CloudFormation templates,
+  Dockerfiles, `docker-compose.yml`, and deployment workflow files to the
+  new agent
+- README notes that `bin/sprocket-*.exe` (the staged, gitignored copies)
+  need `./install.sh`/`install.ps1` re-run after any `git pull` that
+  touches `bin/` — found from a real confusion during Windows testing
+  where `git pull` updated the platform binaries but not the staged ones
+
 ## [0.2.3] — Windows CRLF fix
 
 ### Fixed

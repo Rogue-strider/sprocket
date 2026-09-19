@@ -40,15 +40,16 @@ go build ./...    # builds all three binaries + their internal packages
 All three run in CI (`.github/workflows/validate.yml`) on every push, plus a
 matrix job that cross-compiles release binaries for all 5 targets.
 
-## What's in v0.1
+## What's in v0.3.0
 
-- **8 agents** (`agents/`) — feature-planner, architecture-reviewer,
+- **9 agents** (`agents/`) — feature-planner, architecture-reviewer,
   security-reviewer, build-doctor, go-code-reviewer, rust-code-reviewer,
-  e2e-playwright-tester, web3-contract-reviewer
-- **8 skills** (`skills/`) — reference checklists the agents (and Claude
+  e2e-playwright-tester, web3-contract-reviewer, aws-infra-reviewer
+- **9 skills** (`skills/`) — reference checklists the agents (and Claude
   generally) pull in on demand: Go idioms, Rust ownership patterns, web
   security checklist, Playwright patterns, Solidity security patterns, API
-  design checklist, git commit conventions, release checklist
+  design checklist, git commit conventions, release checklist, AWS infra
+  checklist
 - **4 commands** (`commands/`) — `/plan`, `/review`, `/fix-build`, `/learn`
 - **1 hook** (`hooks/hooks.json`) — `sprocket-hook.exe` runs a fast
   language-appropriate check after every file write (`go vet`, `cargo
@@ -91,6 +92,12 @@ No binary for your platform? `go build -o bin/sprocket-learn.exe
 installed — the installer prints this exact command when it can't find a
 match.
 
+**After every `git pull` that touches `bin/`, re-run `./install.sh` (or
+`install.ps1`).** The staged `bin/sprocket-*.exe` files (no platform suffix)
+are gitignored and are only refreshed by the installer — `git pull` alone
+updates the per-platform binaries (`bin/sprocket-*-<os>-<arch>`) but not the
+staged copies you actually run.
+
 ## Honest roadmap — this is not 64 agents yet
 
 The inspiration for this (ECC, the agent-harness project you found) got to
@@ -98,9 +105,10 @@ The inspiration for this (ECC, the agent-harness project you found) got to
 loop, not by hand-authoring everything upfront. Doing that here would mostly
 produce filler nobody uses. The plan:
 
-1. **Now:** 8 agents/skills that are actually good, in the languages you
-   know (Go, Rust, Web3) plus the generically useful ones (planning,
-   architecture, security, build fixes, e2e testing).
+1. **v0.2:** 8 agents/skills matched to what you knew and had shipped
+   (Go, Rust, Web3). **v0.3 added a 9th** (`aws-infra-reviewer`) once AWS/
+   deployment was named as an actual gap — not guessed in advance, exactly
+   the pattern below.
 2. **Use it for real work.** Every time you hit a task none of the 8 agents
    fit well, that's the signal for agent #9 — not a guess in advance.
 3. **Run `/learn` periodically** (weekly, or after finishing a feature). It
