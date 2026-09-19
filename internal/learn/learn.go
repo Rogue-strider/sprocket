@@ -119,6 +119,7 @@ func (RealGitRunner) ChangedFiles(repoDir, commitHash string) (string, error) {
 func parseCommits(log string) []Commit {
 	var commits []Commit
 	for _, line := range strings.Split(log, "\n") {
+		line = strings.TrimRight(line, "\r")
 		if strings.TrimSpace(line) == "" {
 			continue
 		}

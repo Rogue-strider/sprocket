@@ -11,7 +11,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/yourusername/sprocket/internal/learn"
+	"github.com/Rogue-strider/sprocket/internal/learn"
 )
 
 func main() {

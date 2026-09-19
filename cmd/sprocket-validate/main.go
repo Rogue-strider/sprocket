@@ -9,7 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/yourusername/sprocket/internal/validator"
+	"github.com/Rogue-strider/sprocket/internal/validator"
 )
 
 func main() {

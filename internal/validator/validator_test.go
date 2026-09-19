@@ -57,6 +57,44 @@ func TestValidate_ValidPlugin_PassesCleanly(t *testing.T) {
 	}
 }
 
+// TestValidate_CRLFLineEndings_StillPasses guards against a real bug found
+// on Windows: `git clone` with core.autocrlf converts LF to CRLF on
+// checkout, which made every single agent/skill/command false-fail as
+// "missing YAML frontmatter" because the regex only matched a bare \n.
+func TestValidate_CRLFLineEndings_StillPasses(t *testing.T) {
+	dir := t.TempDir()
+	writeValidPlugin(t, dir)
+
+	// Rewrite every .md file with CRLF line endings, simulating a Windows
+	// checkout with autocrlf=true.
+	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil || info.IsDir() || filepath.Ext(path) != ".md" {
+			return err
+		}
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		crlf := []byte{}
+		for _, b := range data {
+			if b == '\n' {
+				crlf = append(crlf, '\r', '\n')
+			} else {
+				crlf = append(crlf, b)
+			}
+		}
+		return os.WriteFile(path, crlf, 0644)
+	})
+	if err != nil {
+		t.Fatalf("failed to convert fixtures to CRLF: %v", err)
+	}
+
+	r := Validate(dir)
+	if !r.OK() {
+		t.Errorf("expected CRLF-line-ended files to still validate cleanly, got errors: %v", r.Errors)
+	}
+}
+
 func TestValidate_MissingPluginManifest_Fails(t *testing.T) {
 	dir := t.TempDir()
 	writeValidPlugin(t, dir)

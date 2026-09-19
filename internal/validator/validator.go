@@ -76,7 +76,12 @@ func parseFrontmatter(path string, r *Result, root string) map[string]string {
 		r.fail("cannot read %s: %v", rel(root, path), err)
 		return nil
 	}
-	m := frontmatterRE.FindStringSubmatch(string(data))
+	// Normalize CRLF -> LF before matching. Windows git checkouts commonly
+	// convert LF to CRLF on checkout (core.autocrlf), which otherwise makes
+	// every file here false-fail as "missing frontmatter" since the regex
+	// only matched a bare \n.
+	normalized := strings.ReplaceAll(string(data), "\r\n", "\n")
+	m := frontmatterRE.FindStringSubmatch(normalized)
 	if m == nil {
 		r.fail("%s: missing YAML frontmatter (must start with '---')", rel(root, path))
 		return nil

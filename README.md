@@ -143,16 +143,27 @@ security guidance on connecting MCP to a database); remove that query
 param if you want write access. Add a `project_ref=<id>` query param to
 scope Supabase to one project instead of your whole account.
 
-## Before you push this to GitHub
+## Pushing to GitHub
 
-Three placeholders need your real details:
-- `.claude-plugin/plugin.json` → `author.name`
-- `.claude-plugin/marketplace.json` → `owner.name`
-- `LICENSE` → the copyright line
-- `go.mod` and every `github.com/yourusername/sprocket` import path across
-  `cmd/` and `internal/` → your actual GitHub username (find/replace is
-  fine, then `go build ./...` to confirm nothing broke)
+The placeholders are already filled in (author/owner = `Rogue-strider`,
+module path = `github.com/Rogue-strider/sprocket`). To publish:
 
-Then `git init`, commit, push, and `/plugin marketplace add your-username/sprocket`
-works for anyone (including you, from any machine) instead of needing the
-local path.
+```bash
+git init
+git add -A
+git commit -m "chore(release): initial sprocket v0.2.0"
+git branch -M main
+git remote add origin https://github.com/Rogue-strider/sprocket.git
+git push -u origin main
+```
+
+Once pushed, anyone (including you, from any machine) can install it
+without the local path:
+```
+/plugin marketplace add Rogue-strider/sprocket
+/plugin install sprocket@sprocket-marketplace
+```
+
+CI (`.github/workflows/validate.yml`) runs automatically on the first push
+— check the Actions tab for the `go vet` + `go test` + `go build` run and
+the cross-compile matrix job.

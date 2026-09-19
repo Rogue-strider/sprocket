@@ -9,7 +9,7 @@ import (
 	"context"
 	"os"
 
-	"github.com/yourusername/sprocket/internal/hookrunner"
+	"github.com/Rogue-strider/sprocket/internal/hookrunner"
 )
 
 func main() {

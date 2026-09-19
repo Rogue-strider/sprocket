@@ -21,7 +21,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/yourusername/sprocket/internal/pkgmanager"
+	"github.com/Rogue-strider/sprocket/internal/pkgmanager"
 )
 
 // Payload mirrors the JSON Claude Code sends on stdin for PostToolUse hooks.
